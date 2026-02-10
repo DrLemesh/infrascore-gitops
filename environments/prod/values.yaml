@@ -7,18 +7,28 @@ backend-chart:
   image:
     repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-backend"
     tag: "latest"
+  config:
+    # כאן אתה משתמש בשם ה-Service כפי שהוא מופיע בקלאסטר!
+    dbHost: "infrascore-db"
 
 # 2. Frontend Service
 frontend-chart:
   image:
     repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-frontend"
     tag: "latest"
+  config:
+    # כאן אתה כותב את השם שראית ב-kubectl get svc
+    backendUrl: "http://infrascore-prod-backend-chart"
 
 # 3. pgadmin
 pgadmin-chart:
   image:
     repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-pgadmin"
     tag: "latest"
+  env:
+    PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+    PGADMIN_DEFAULT_PASSWORD: "root"
+    POSTGRES_HOST: "infrascore-db"
 
 # 4. Database / Migration Tool
 database-chart:
