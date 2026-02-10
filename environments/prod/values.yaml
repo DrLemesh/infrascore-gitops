@@ -3,25 +3,25 @@
 # ==========================================
 
 # 1. Backend Service
-backend:
+backend-chart:
   image:
     repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-backend"
     tag: "latest"
 
 # 2. Frontend Service
-frontend:
+frontend-chart:
   image:
     repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-frontend"
     tag: "latest"
 
 # 3. pgadmin
-pgadmin:
+pgadmin-chart:
   image:
     repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-pgadmin"
     tag: "latest"
 
 # 4. Database / Migration Tool
-database:
+database-chart:
   image:
     repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-db"
   backupBucket: "infrascore-db-backup-prod"

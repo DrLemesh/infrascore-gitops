@@ -1,6 +1,6 @@
 # ============================================================================
 # ArgoCD Application - Production Environment
-# Deploys InfraScore to prod namespace with manual sync for controlled releases
+# Deploys InfraScore to prod namespace using Multiple Sources
 # ============================================================================
 
 apiVersion: argoproj.io/v1alpha1
@@ -14,13 +14,15 @@ spec:
   project: default
   
   sources:
+    # מקור 1: ה-Umbrella Chart שיצרת בתיקיית helm
     - repoURL: https://github.com/DrLemesh/InfraScore
       targetRevision: main
-      path: helm/infrascore
+      path: helm # הנתיב המעודכן שבו נמצא ה-Chart.yaml הראשי
       helm:
         valueFiles:
           - $values/environments/prod/values.yaml
     
+    # מקור 2: ריפו הגיטאופס שבו נמצאים ה-Values
     - repoURL: https://github.com/DrLemesh/infrascore-gitops
       targetRevision: main
       ref: values
@@ -30,6 +32,9 @@ spec:
     namespace: prod
   
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - Validate=true
