@@ -1,0 +1,40 @@
+# ==========================================
+# Dev Environment Values - Cost Optimized
+# ==========================================
+
+replicaCount: 1 # ב-Dev אין צורך ביותר מאחד
+
+image:
+  repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-backend"
+  tag: "latest"
+  pullPolicy: Always
+
+# הגדרת משאבים מינימלית כדי שלא נחרוג מה-T3.medium
+resources:
+  requests:
+    cpu: "100m"      # 10% מתוך ליבה אחת
+    memory: "128Mi"
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+
+database:
+  storageSize: "5Gi" # דיסק קטן ל-Dev
+  backupBucket: "infrascore-database-backups-2026"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "300m"
+      memory: "512Mi"
+
+serviceAccount:
+  create: true
+  name: "postgres-sa"
+  roleArn: "arn:aws:iam::941464113257:role/infrascore-s3-backup-role"
+
+# הגדרת הסביבה ל-Development בלבד
+env:
+  ENVIRONMENT: "dev"
+  DEBUG: "true"

@@ -1,0 +1,43 @@
+# ============================================================================
+# ArgoCD Application - Production Environment
+# Deploys InfraScore to prod namespace with manual sync for controlled releases
+# ============================================================================
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infrascore-prod
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  
+  sources:
+    - repoURL: https://github.com/DrLemesh/InfraScore
+      targetRevision: main
+      path: helm/infrascore
+      helm:
+        valueFiles:
+          - $values/environments/prod/values.yaml
+    
+    - repoURL: https://github.com/DrLemesh/infrascore-gitops
+      targetRevision: main
+      ref: values
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prod
+  
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - Validate=true
+      - ServerSideApply=false
+    
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

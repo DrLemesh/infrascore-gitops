@@ -1,0 +1,60 @@
+# ==========================================
+# Prod Environment Values - High Availability
+# ==========================================
+
+# 1. Backend Service
+backend:
+  image:
+    repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-backend"
+    tag: "latest"
+
+# 2. Frontend Service
+frontend:
+  image:
+    repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-frontend"
+    tag: "latest"
+
+# 3. pgadmin
+pgadmin:
+  image:
+    repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-pgadmin"
+    tag: "latest"
+
+# 4. Database / Migration Tool
+database:
+  image:
+    repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-db"
+  backupBucket: "infrascore-db-backup-prod"
+  roleArn: "arn:aws:iam::941464113257:role/infrascore-s3-backup-role"
+  storageSize: "20Gi"
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
+# Global Resources
+resources:
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+serviceAccount:
+  create: true
+  name: "postgres-sa"
+  roleArn: "arn:aws:iam::941464113257:role/infrascore-s3-backup-role"
+
+# Environment Variables
+env:
+  ENVIRONMENT: "prod"
+  DEBUG: "false"
+  CLUSTER_NAME: "infrascore-cluster"
+  ARGOCD_URL: "ad04d52296f4145b49f922f7d12a9e3a-1882486946.us-east-1.elb.amazonaws.com"
+  FRONTEND_URL: "a8e403628a4e54a249df7e4612ac5734-843108221.us-east-1.elb.amazonaws.com"
+  GRAFANA_URL: "a1fb95a48855b4124a809e7a111d4820-227831505.us-east-1.elb.amazonaws.com"
+  PGADMIN_URL: "a9b06b948c3654f9faa4d3cd921a33cf-985664384.us-east-1.elb.amazonaws.com"
