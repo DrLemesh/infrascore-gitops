@@ -17,7 +17,7 @@ spec:
     # מקור 1: ה-Umbrella Chart שיצרת בתיקיית helm
     - repoURL: https://github.com/DrLemesh/InfraScore
       targetRevision: main
-      path: helm # הנתיב המעודכן שבו נמצא ה-Chart.yaml הראשי
+      path: ./helm # הנתיב המעודכן שבו נמצא ה-Chart.yaml הראשי
       helm:
         valueFiles:
           - $values/environments/prod/values.yaml
