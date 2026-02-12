@@ -1,0 +1,48 @@
+# ============================================================================
+# ArgoCD Application - Dev Environment
+# Deploys InfraScore to dev namespace using Multiple Sources
+# ============================================================================
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infrascore-dev
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  
+  sources:
+    # Source 1: Umbrella Chart
+    - repoURL: https://github.com/DrLemesh/InfraScore
+      targetRevision: main
+      path: ./helm
+      helm:
+        valueFiles:
+          - $values/environments/dev/values.yaml
+    
+    # Source 2: GitOps repo with environment values
+    - repoURL: https://github.com/DrLemesh/infrascore-gitops
+      targetRevision: main
+      ref: values
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - Validate=true
+      - ServerSideApply=false
+    
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

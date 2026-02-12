@@ -2,25 +2,63 @@
 # Dev Environment Values - Cost Optimized
 # ==========================================
 
-replicaCount: 1 # ב-Dev אין צורך ביותר מאחד
+# 1. Backend Service
+backend-chart:
+  image:
+    repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-backend"
+    tag: "latest"
+  replicaCount: 1
+  config:
+    dbHost: "infrascore-db"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
 
-image:
-  repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-backend"
-  tag: "latest"
-  pullPolicy: Always
+# 2. Frontend Service
+frontend-chart:
+  image:
+    repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-frontend"
+    tag: "latest"
+  replicaCount: 1
+  config:
+    backendUrl: "http://infrascore-dev-backend-chart"
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "150m"
+      memory: "128Mi"
 
-# הגדרת משאבים מינימלית כדי שלא נחרוג מה-T3.medium
-resources:
-  requests:
-    cpu: "100m"      # 10% מתוך ליבה אחת
-    memory: "128Mi"
-  limits:
-    cpu: "200m"
-    memory: "256Mi"
+# 3. pgadmin
+pgadmin-chart:
+  image:
+    repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-pgadmin"
+    tag: "latest"
+  replicaCount: 1
+  env:
+    PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+    PGADMIN_DEFAULT_PASSWORD: "root"
+    POSTGRES_HOST: "infrascore-db"
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "100m"
+      memory: "128Mi"
 
-database:
-  storageSize: "5Gi" # דיסק קטן ל-Dev
-  backupBucket: "infrascore-database-backups-2026"
+# 4. Database
+database-chart:
+  image:
+    repository: "941464113257.dkr.ecr.us-east-1.amazonaws.com/infrascore-db"
+  backupBucket: "infrascore-db-backup-prod"
+  roleArn: "arn:aws:iam::941464113257:role/infrascore-s3-backup-role"
+  storageSize: "5Gi"
   resources:
     requests:
       cpu: "100m"
@@ -34,7 +72,8 @@ serviceAccount:
   name: "postgres-sa"
   roleArn: "arn:aws:iam::941464113257:role/infrascore-s3-backup-role"
 
-# הגדרת הסביבה ל-Development בלבד
+# Environment Variables
 env:
   ENVIRONMENT: "dev"
   DEBUG: "true"
+  CLUSTER_NAME: "infrascore-cluster"
